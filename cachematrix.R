@@ -10,6 +10,17 @@ makeCacheMatrix <- function(x = matrix()) {
             inv <<- NULL
       }
       
+      ## change a value in matrix (to change in case not invertible)
+      setnum <- function(n, r, c){
+
+            if (r<= as.integer(dim(x)[1]) & c <= as.integer(dim(x)[2])){
+                  ##print(x)
+                  x[r,c] <<- n
+                  inv <<- NULL
+                  ##print(x)
+            }
+      }
+      
       get <- function() x
       setinv <- function(invrs)    inv <<- invrs
       getinv <- function() inv
@@ -17,7 +28,8 @@ makeCacheMatrix <- function(x = matrix()) {
         set = set, 
         get = get,
         setinv = setinv,
-        getinv = getinv
+        getinv = getinv, 
+        setnum = setnum
       )
       
 }
@@ -32,17 +44,9 @@ cacheSolve <- function(x, ...) {
             message("getting cached data")
             return(inv)
       }
-      y <- createIdMatrix(dim(x$get)[1])
+      y <- diag(nrow = dim(x$get()))
       inv <- solve(x$get(), y, ...)
       x$setinv(inv)
       inv
 }
 
-createIdMatrix <- function(d){
-      ##print(d)
-      mx <- matrix(0, d, d)
-      for(i in 1:d){
-            mx[i,i] <- 1
-      }
-      return(mx)
-}
